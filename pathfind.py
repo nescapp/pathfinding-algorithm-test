@@ -195,6 +195,16 @@ while running:
                 # Update the player's movement based on the pathfinding result
                 # You can use functions like get_direction(), can_move(), move(), etc.
 
+                while not is_on_target():
+                    if get_y() < get_target_y()
+                        while get_direction() != "SOUTH"
+                            turn_right()
+                    else:
+                        while get_direction() != "NORTH"
+                            turn_right()
+
+                    while not get_y()
+
                 pass
 
     # Draw the grid
