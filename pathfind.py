@@ -2,9 +2,8 @@
 make a game with pygame to practice pathfinding algorithms. the main window should be a grid on which i can place obstacles (houses),  ennemies (trolls), one instance of the player and one instance of the target. The default functions should be get_direction() that returns a string "NORTH", "EAST", "WEST" and "SOUTH" to get the direction of the player, can_move() that returns false if there is an obstacle in front of the player in the direction he is facing, move() to move the player one cell in the direction he is facing , turn_left() and turn_right() to turn the player, is_on_target() that returns true if the player is on the target, and is_in_front_of_enemy() that returns true if there is an enemy in front of the player in the direction he is facing. The game uses a system of coordinates for each cell of the grid, the horizontal axis is the x axis which increases from left to right, the vertical axis is the y axis which increases from top to bottom. the furthest top left grid cell has the coordinates (0;0). There is a function get_x that returns the x coordinate of the player, get_y that returns the y coordinate of the player, get_target_x that returns the x coordinate of the target and get_target_y that returns the y coordinate of the target .combine everything in one file. indicate with a comment where my path finding algorithm should go, my algorithm should only execute once when I press space on my keyboard. There is a trail behind the player that shows me where the player has been and an arrow that shows me the direction of the player in the player cell. Please tell me if something is unclear or doesn't make sense
 """
 
-import pygame
 import sys
-import time
+import pygame
 
 # Constants
 GRID_SIZE = 50
@@ -185,7 +184,13 @@ while running:
                 # Update the player's movement based on the pathfinding result
                 # You can use functions like get_direction(), can_move(), move(), etc.
 
-                
+                # make an algorithm that moves the player to the target regardless of obstacles and enemies
+                # the algorithm can only use while loops and if statements
+                # you can use the functions get_direction(), can_move(), move(), turn_left(), turn_right(), is_on_target(), is_in_front_of_enemy(), get_x(), get_y(), get_target_x(), get_target_y() and destroy_target()
+
+
+
+                # destroy the target
 
                 pass
             if event.key == pygame.K_o:
