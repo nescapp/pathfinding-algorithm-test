@@ -3,6 +3,7 @@ make a game with pygame to practice pathfinding algorithms. the main window shou
 """
 
 import sys
+import json
 import pygame
 
 # Constants
@@ -27,18 +28,48 @@ target_x, target_y = 9, 3
 player_direction = "SOUTH"  # Initial player direction
 
 # create obstacles
-obstacles = [(7,7), (8,7), (9,7), (10,7), (11,7), (9,2), (9,4), (9,5)]
-
+# obstacles = [(7,7), (8,7), (9,7), (10,7), (11,7), (9,2), (9,4), (9,5)]
 # create enemies
-enemies = []
+# enemies = []
+# if map.json exists, load it but let me change the content of the file later
+try:
+    with open("map.json", "r") as f:
+        map = json.load(f)
+        obstacles = map["obstacles"]
+        obstacles = [(int(x), int(y)) for x, y in obstacles]
+        enemies = map["enemies"]
+        enemies = [(int(x), int(y)) for x, y in enemies]
+        player_x, player_y = map["player"]
+        target_x, target_y = map["target"]
+        player_direction = map["player_direction"]
+        arrow = pygame.image.load("arrow.png")
+        arrow = pygame.transform.scale(arrow, (GRID_SIZE, GRID_SIZE))
+        if player_direction == "NORTH":
+            arrow = pygame.transform.rotate(arrow, 0)
+        elif player_direction == "EAST":
+            arrow = pygame.transform.rotate(arrow, 270)
+        elif player_direction == "WEST":
+            arrow = pygame.transform.rotate(arrow, 90)
+        elif player_direction == "SOUTH":
+            arrow = pygame.transform.rotate(arrow, 180)
+
+except FileNotFoundError:
+    # create the map.json file
+    map = {"obstacles": [], "enemies": [], "player": [player_x, player_y], "target": [target_x, target_y], "player_direction": player_direction}
+    with open("map.json", "w") as f:
+        json.dump(map, f)
+    obstacles = []
+    enemies = []
+    arrow = pygame.image.load("arrow.png")
+
+
 
 # Initialize game variables
 trail = [(player_x, player_y)]  # Trail of player's movement
-arrow = pygame.image.load("arrow.png")  # Replace with your arrow image
-arrow = pygame.transform.scale(arrow, (GRID_SIZE, GRID_SIZE))
-arrow = pygame.transform.rotate(arrow, 180)
 
 def refresh_screen():
+    # Draw target
+    pygame.draw.rect(window, WHITE, (target_x * GRID_SIZE, target_y * GRID_SIZE, GRID_SIZE, GRID_SIZE))
     # Draw trail and arrow
     for pos in trail:
         pygame.draw.rect(window, GREEN, (pos[0] * GRID_SIZE, pos[1] * GRID_SIZE, GRID_SIZE, GRID_SIZE))
@@ -49,8 +80,6 @@ def refresh_screen():
     # Draw enemies
     for enemy in enemies:
         pygame.draw.rect(window, RED, (enemy[0] * GRID_SIZE, enemy[1] * GRID_SIZE, GRID_SIZE, GRID_SIZE))
-    # Draw target
-    pygame.draw.rect(window, WHITE, (target_x * GRID_SIZE, target_y * GRID_SIZE, GRID_SIZE, GRID_SIZE))
 
 
     # Update the trail
@@ -69,30 +98,30 @@ def get_direction():
 def can_move():
     """This function returns False if there is an obstacle in front of the player in the direction he is facing"""
     if player_direction == "NORTH":
-        return (player_x, player_y - 1) not in obstacles
+        return player_y > 0 and (player_x, player_y - 1) not in obstacles
     elif player_direction == "EAST":
-        return (player_x + 1, player_y) not in obstacles
+        return player_x < GRID_WIDTH - 1 and (player_x + 1, player_y) not in obstacles
     elif player_direction == "SOUTH":
-        return (player_x, player_y + 1) not in obstacles
+        return player_y < GRID_HEIGHT - 1 and (player_x, player_y + 1) not in obstacles
     elif player_direction == "WEST":
-        return (player_x - 1, player_y) not in obstacles
+        return player_x > 0 and (player_x - 1, player_y) not in obstacles
     
 
 def move():
     """Funtion to move the player one cell in the direction he is facing and prevent him from going off the grid and through obstacles"""
-    global player_x, player_y, player_direction
+    global player_x, player_y
     if player_direction == "NORTH":
-        if player_y > 0 and (player_x, player_y - 1) not in obstacles:
+        if player_y > 0 and (player_x, player_y - 1) not in obstacles and (player_x, player_y - 1) not in enemies:
             player_y -= 1
     elif player_direction == "EAST":
-        if player_x < GRID_WIDTH - 1 and (player_x + 1, player_y) not in obstacles:
+        if player_x < GRID_WIDTH - 1 and (player_x + 1, player_y) not in obstacles and (player_x + 1, player_y) not in enemies:
             player_x += 1
     elif player_direction == "SOUTH":
-        if player_y < GRID_HEIGHT - 1 and (player_x, player_y + 1) not in obstacles:
+        if player_y < GRID_HEIGHT - 1 and (player_x, player_y + 1) not in obstacles and (player_x, player_y + 1) not in enemies:
             player_y += 1
     elif player_direction == "WEST":
-        if player_x > 0 and (player_x - 1, player_y) not in obstacles:
-            player_x -= 1    
+        if player_x > 0 and (player_x - 1, player_y) not in obstacles and (player_x - 1, player_y) not in enemies:
+            player_x -= 1
 
     refresh_screen()
 
@@ -160,7 +189,9 @@ def get_target_y():
 
 def destroy_target():
     global target_x, target_y
-    target_x, target_y = -1, -1
+    if (player_x, player_y) == (target_x, target_y):
+        print("\033[93mTarget destroyed\033[0m")
+        # target_x, target_y = -1, -1
 
 
 # Function to draw the grid
@@ -188,41 +219,165 @@ while running:
                 # the algorithm can only use while loops and if statements
                 # you can use the functions get_direction(), can_move(), move(), turn_left(), turn_right(), is_on_target(), is_in_front_of_enemy(), get_x(), get_y(), get_target_x(), get_target_y() and destroy_target()
 
+                while not is_on_target():
+                    # turn east if the target is east of the player
+                    if get_target_x() > get_x():
+                        while get_direction() != "EAST":
+                            turn_right()
+
+                        while get_x() < get_target_x():
+                            if can_move() and not is_in_front_of_enemy():
+                                move()
+                            else :
+                                while not can_move() or is_in_front_of_enemy():
+                                    while not can_move() or is_in_front_of_enemy():
+                                        turn_right()
+                                    move()
+                                    turn_left()
+                                if get_direction() != "EAST":
+                                    move()
+                                    turn_left()
+
+                        # turn north if the target is north of the player
+                        if get_target_y() < get_y():
+                            while get_direction() != "NORTH":
+                                turn_left()
+
+                            while get_y() > get_target_y():
+                                if can_move() and not is_in_front_of_enemy():
+                                    move()
+                                else :
+                                    while not can_move() or is_in_front_of_enemy():
+                                        while not can_move() or is_in_front_of_enemy():
+                                            turn_right()
+                                        move()
+                                        turn_left()
+                                    if get_direction() != "NORTH":
+                                        move()
+                                        turn_left()
+                        else:
+                            while get_direction() != "SOUTH":
+                                turn_right()
+
+                            while get_y() < get_target_y():
+                                if can_move() and not is_in_front_of_enemy():
+                                    move()
+                                else :
+                                    while not can_move() or is_in_front_of_enemy():
+                                        while not can_move():
+                                            turn_right()
+                                        move()
+                                        turn_left()
+                                    if get_direction() != "SOUTH":
+                                        move()
+                                        turn_left()
+
+                    # turn west if the target is west of the player
+                    else:
+                        while get_direction() != "WEST":
+                            turn_right()
+
+                        while get_x() > get_target_x():
+                            if can_move() and not is_in_front_of_enemy():
+                                move()
+                            else :
+                                while not can_move() or is_in_front_of_enemy():
+                                    while not can_move() or is_in_front_of_enemy():
+                                        turn_right()
+                                    move()
+                                    turn_left()
+                                if get_direction() != "WEST":
+                                    move()
+                                    turn_left()
+
+                        # turn north if the target is north of the player
+                        if get_target_y() < get_y():
+                            while get_direction() != "NORTH":
+                                turn_left()
+
+                            while get_y() > get_target_y():
+                                if can_move() and not is_in_front_of_enemy():
+                                    move()
+                                else :
+                                    while not can_move() or is_in_front_of_enemy():
+                                        while not can_move() or is_in_front_of_enemy():
+                                            turn_right()
+                                        move()
+                                        turn_left()
+                                    if get_direction() != "NORTH":
+                                        move()
+                                        turn_left()
+                        else:
+                            while get_direction() != "SOUTH":
+                                turn_right()
+
+                            while get_y() < get_target_y():
+                                if can_move() and not is_in_front_of_enemy():
+                                    move()
+                                else :
+                                    while not can_move() or is_in_front_of_enemy():
+                                        while not can_move():
+                                            turn_right()
+                                        move()
+                                        turn_left()
+                                    if get_direction() != "SOUTH":
+                                        move()
+                                        turn_left()
 
 
-                # destroy the target
+                        
+                        
+                destroy_target()
 
-                pass
+
             if event.key == pygame.K_o:
                 mouse_pos = pygame.mouse.get_pos()
                 if (mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE) != (player_x, player_y) and (mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE) != (target_x, target_y):
                     if (mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE) not in obstacles:
                         obstacles.append((mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE))
+                        map["obstacles"].append([mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE])
+                        json.dump(map, open("map.json", "w"))
                         if (mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE) in enemies:
                             enemies.remove((mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE))
+                            map["enemies"].remove([mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE])
+                            json.dump(map, open("map.json", "w"))
                     else:
                         obstacles.remove((mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE))
+                        map["obstacles"].remove([mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE])
+                        json.dump(map, open("map.json", "w"))
             if event.key == pygame.K_e:
                 mouse_pos = pygame.mouse.get_pos()
                 if (mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE) != (player_x, player_y) and (mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE) != (target_x, target_y):
                     if (mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE) not in enemies:
                         enemies.append((mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE))
+                        map["enemies"].append([mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE])
+                        json.dump(map, open("map.json", "w"))
                         if (mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE) in obstacles:
                             obstacles.remove((mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE))
+                            map["obstacles"].remove([mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE])
+                            json.dump(map, open("map.json", "w"))
                     else:
-                        enemies.remove((mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE))
+                        enemies.remove([mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE])
+                        map["enemies"].remove([mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE])
+                        json.dump(map, open("map.json", "w"))
             if event.key == pygame.K_t:
                 mouse_pos = pygame.mouse.get_pos()
                 if (mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE) != (player_x, player_y) and (mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE) != (target_x, target_y):
                     target_x, target_y = mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE
+                    map["target"] = [target_x, target_y]
+                    json.dump(map, open("map.json", "w"))
             if event.key == pygame.K_p:
                 mouse_pos = pygame.mouse.get_pos()
                 if (mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE) not in obstacles and (mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE) not in enemies and not (mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE) == (target_x, target_y):
                     if (mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE) != (player_x, player_y):
                         player_x, player_y = mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE
+                        map["player"] = [player_x, player_y]
+                        json.dump(map, open("map.json", "w"))
                     else:
                         turn_left()
-
+                        map["player_direction"] = get_direction()
+                        json.dump(map, open("map.json", "w"))
+        refresh_screen()
     # Draw the grid
     refresh_screen()
 pygame.quit()
