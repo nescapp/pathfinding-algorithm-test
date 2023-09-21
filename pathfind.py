@@ -195,78 +195,8 @@ while running:
                 # Implement your pathfinding algorithm here
                 # Update the player's movement based on the pathfinding result
                 # You can use functions like get_direction(), can_move(), move(), etc.
-                # It should run only once when you press the space bar 
-                
-                while get_direction() != "EAST":
-	                turn_left()
-
-                while get_x() < get_target_x() - 1 :
-                    if can_move():
-                        move()
-                    else :
-                        while not can_move():
-                            turn_right()
-                            move()
-                            turn_left()
-                        move()
-                if can_move():
-                    move()
-                else:
-                    if get_y() < get_target_y():
-                        while not can_move():
-                            turn_left()
-                            move()
-                            turn_right()
-                    else:
-                        while not can_move():
-                            turn_right()
-                            move()
-                            turn_left()
-                    move()
-
-                if get_y() > get_target_y():
-                    turn_left()
-                else:
-                    turn_right()
-
-                
-
-                # while not is_on_target():
-                #     if can_move():
-                #         move()
-                #     else:
-                #         if get_x() < get_target_x():
-                #             while not can_move():
-                #                 turn_right()
-                #                 move()
-                #                 turn_left()
-                #         else:
-                #             while not can_move():
-                #                 turn_left()
-                #                 move()
-                #                 turn_right()
-                #         move()
-                #         turn_right()
-                #         while not can_move():
-                #             turn_left()
-                #             move()
-                #             turn_right()
-                #         move()
-                #         turn_left()
-
-                # destroy_target()
 
                 pass
-
-    # Update player's position and direction
-    # if player_direction == "NORTH":
-    #     player_y -= 1
-    # elif player_direction == "EAST":
-    #     player_x += 1
-    # elif player_direction == "SOUTH":
-    #     player_y += 1
-    # elif player_direction == "WEST":
-    #     player_x -= 1
 
     # Draw the grid
     refresh_screen()
