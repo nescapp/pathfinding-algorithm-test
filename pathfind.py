@@ -83,7 +83,6 @@ def can_move():
 def move():
     """Funtion to move the player one cell in the direction he is facing and prevent him from going off the grid and through obstacles"""
     global player_x, player_y, player_direction
-    print(player_x, player_y)
     if player_direction == "NORTH":
         if player_y > 0 and (player_x, player_y - 1) not in obstacles:
             player_y -= 1
