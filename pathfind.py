@@ -29,7 +29,6 @@ player_direction = "SOUTH"  # Initial player direction
 
 # create obstacles
 obstacles = [(7,7), (8,7), (9,7), (10,7), (11,7), (9,2), (9,4), (9,5)]
-obstacle_edit_mode = True
 
 # create enemies
 enemies = []
@@ -177,15 +176,6 @@ running = True
 while running:
     window.fill((0, 0, 0))
 
-    # add obstacles on clicked cells
-    mouse_x, mouse_y = pygame.mouse.get_pos()
-    if pygame.mouse.get_pressed()[0]:
-        if (mouse_x // GRID_SIZE, mouse_y // GRID_SIZE) not in obstacles:
-            obstacles.append((mouse_x // GRID_SIZE, mouse_y // GRID_SIZE))
-        else:
-            obstacles.remove((mouse_x // GRID_SIZE, mouse_y // GRID_SIZE))
-
-
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -198,10 +188,37 @@ while running:
                 
 
                 pass
+            if event.key == pygame.K_o:
+                mouse_pos = pygame.mouse.get_pos()
+                if (mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE) != (player_x, player_y) and (mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE) != (target_x, target_y):
+                    if (mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE) not in obstacles:
+                        obstacles.append((mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE))
+                        if (mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE) in enemies:
+                            enemies.remove((mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE))
+                    else:
+                        obstacles.remove((mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE))
+            if event.key == pygame.K_e:
+                mouse_pos = pygame.mouse.get_pos()
+                if (mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE) != (player_x, player_y) and (mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE) != (target_x, target_y):
+                    if (mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE) not in enemies:
+                        enemies.append((mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE))
+                        if (mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE) in obstacles:
+                            obstacles.remove((mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE))
+                    else:
+                        enemies.remove((mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE))
+            if event.key == pygame.K_t:
+                mouse_pos = pygame.mouse.get_pos()
+                if (mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE) != (player_x, player_y) and (mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE) != (target_x, target_y):
+                    target_x, target_y = mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE
+            if event.key == pygame.K_p:
+                mouse_pos = pygame.mouse.get_pos()
+                if (mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE) not in obstacles and (mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE) not in enemies and not (mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE) == (target_x, target_y):
+                    if (mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE) != (player_x, player_y):
+                        player_x, player_y = mouse_pos[0] // GRID_SIZE, mouse_pos[1] // GRID_SIZE
+                    else:
+                        turn_left()
 
     # Draw the grid
     refresh_screen()
-    
-
 pygame.quit()
 sys.exit()
