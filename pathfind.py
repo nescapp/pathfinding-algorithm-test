@@ -7,7 +7,7 @@ import json
 import pygame
 
 # Constants
-GRID_SIZE = 50
+GRID_SIZE = 30
 GRID_WIDTH = 16
 GRID_HEIGHT = 12
 WINDOW_WIDTH = GRID_WIDTH * GRID_SIZE
@@ -377,6 +377,30 @@ while running:
                         turn_left()
                         map["player_direction"] = get_direction()
                         json.dump(map, open("map.json", "w"))
+            if event.key == pygame.K_x:
+                # export the map as a table
+                print("[")
+                for y in range(GRID_HEIGHT):
+                    print("[", end="")
+                    for x in range(GRID_WIDTH):
+                        if (x, y) in obstacles:
+                            print("0", end="")
+                        elif (x, y) in enemies:
+                            print("4", end="")
+                        elif (x, y) == (player_x, player_y):
+                            print("2", end="")
+                        elif (x, y) == (target_x, target_y):
+                            print("3", end="")
+                        else:
+                            print("1", end="")
+                        if x != GRID_WIDTH - 1:
+                            print(",", end="")
+                    print("]", end="")
+                    if y != GRID_HEIGHT - 1:
+                        print(",")
+
+                print("\n]")
+
         refresh_screen()
     # Draw the grid
     refresh_screen()
