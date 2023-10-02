@@ -20,6 +20,15 @@ RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 
+BACK_TEXTURE = pygame.image.load("assets/back.png")
+BACK_TEXTURE = pygame.transform.scale(BACK_TEXTURE, (GRID_SIZE, GRID_SIZE))
+TARGET_TEXTURE = pygame.image.load("assets/target.png")
+TARGET_TEXTURE = pygame.transform.scale(TARGET_TEXTURE, (GRID_SIZE, GRID_SIZE))
+OBSTACLE_TEXTURE = pygame.image.load("assets/wall.png")
+OBSTACLE_TEXTURE = pygame.transform.scale(OBSTACLE_TEXTURE, (GRID_SIZE, GRID_SIZE))
+ENEMY_TEXTURE = pygame.image.load("assets/enemy.png")
+ENEMY_TEXTURE = pygame.transform.scale(ENEMY_TEXTURE, (GRID_SIZE, GRID_SIZE))
+
 # Initialize Pygame
 pygame.init()
 window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
@@ -64,23 +73,15 @@ except FileNotFoundError:
 
 
 
-# Initialize game variables
-trail = [(player_x, player_y)]  # Trail of player's movement
 
-back_texture = pygame.image.load("assets/back.png")
-back_texture = pygame.transform.scale(back_texture, (GRID_SIZE, GRID_SIZE))
-target_texture = pygame.image.load("assets/target.png")
-target_texture = pygame.transform.scale(target_texture, (GRID_SIZE, GRID_SIZE))
-obstacle_texture = pygame.image.load("assets/wall.png")
-obstacle_texture = pygame.transform.scale(obstacle_texture, (GRID_SIZE, GRID_SIZE))
-enemy_texture = pygame.image.load("assets/enemy.png")
-enemy_texture = pygame.transform.scale(enemy_texture, (GRID_SIZE, GRID_SIZE))
+trail = [(player_x, player_y)]  
+
 
 def refresh_screen():
     """Does shit"""
-    for x_refresh in range(0, WINDOW_WIDTH, GRID_SIZE):
-        for y_refresh in range(0, WINDOW_HEIGHT, GRID_SIZE):
-            window.blit(back_texture, (x_refresh, y_refresh)) # rename varaibles
+    for x in range(0, WINDOW_WIDTH, GRID_SIZE):
+        for y in range(0, WINDOW_HEIGHT, GRID_SIZE):
+            window.blit(BACK_TEXTURE, (x, y))
 
     for x in range(0, WINDOW_WIDTH, GRID_SIZE):
         pygame.draw.line(window, BLACK, (x, 0), (x, WINDOW_HEIGHT))
@@ -88,9 +89,9 @@ def refresh_screen():
         pygame.draw.line(window, BLACK, (0, y), (WINDOW_WIDTH, y))
 
     for obstacle in obstacles:
-        window.blit(obstacle_texture, (obstacle[0] * GRID_SIZE, obstacle[1] * GRID_SIZE))
+        window.blit(OBSTACLE_TEXTURE, (obstacle[0] * GRID_SIZE, obstacle[1] * GRID_SIZE))
     for enemy in enemies:
-        window.blit(enemy_texture, (enemy[0] * GRID_SIZE, enemy[1] * GRID_SIZE))
+        window.blit(ENEMY_TEXTURE, (enemy[0] * GRID_SIZE, enemy[1] * GRID_SIZE))
         
 
     for pos in trail:
@@ -101,7 +102,7 @@ def refresh_screen():
     if len(trail) > 50:  # Adjust the number of trail segments as needed
         trail.pop(0)
 
-    window.blit(target_texture, (target_x * GRID_SIZE, target_y * GRID_SIZE))
+    window.blit(TARGET_TEXTURE, (target_x * GRID_SIZE, target_y * GRID_SIZE))
     window.blit(source, (player_x * GRID_SIZE, player_y * GRID_SIZE))
     pygame.display.flip()
     clock.tick(30)
@@ -206,8 +207,6 @@ def destroy_dark_force():
     if (player_x, player_y) == (target_x, target_y):
         print("\033[93mTarget destroyed\033[0m")
 
-# Call the function somewhere in your code
-destroy_dark_force()
 # Main game loop
 running = True
 while running:
@@ -218,12 +217,6 @@ while running:
             running = False
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
-
-                # from codehere import *
-                # import without runing the code inside
-                # run the code inside
-                # del sys.modules["codehere"]
-
                 import your_code_here
                 importlib.reload(your_code_here)
                 
@@ -314,7 +307,6 @@ while running:
                     source = pygame.transform.rotate(source, 180)
 
         refresh_screen()
-    # Draw the grid
     refresh_screen()
 pygame.quit()
 sys.exit()
