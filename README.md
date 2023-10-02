@@ -5,3 +5,10 @@
 ```
 pip install pygame
 ```
+
+## How to use
+o : place obstacle
+e : place enemy
+p : place player
+t : place target
+x : export map in a table format
