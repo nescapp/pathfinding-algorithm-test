@@ -1,9 +1,9 @@
-from pathfind import * # keep this line to import all the functions from pathfind.py
+from pathfind import * # keep this line to import all the functions
 
 while not is_on_target():
     # turn east if the target is east of the player
     if get_target_x() > get_x():
-        while get_direction() != "EAST":
+        while get_direction() != EAST:
             turn_right()
 
         while get_x() < get_target_x():
@@ -15,13 +15,13 @@ while not is_on_target():
                         turn_right()
                     move()
                     turn_left()
-                if get_direction() != "EAST":
+                if get_direction() != EAST:
                     move()
                     turn_left()
 
         # turn north if the target is north of the player
         if get_target_y() < get_y():
-            while get_direction() != "NORTH":
+            while get_direction() != NORTH:
                 turn_left()
 
             while get_y() > get_target_y():
@@ -33,11 +33,11 @@ while not is_on_target():
                             turn_right()
                         move()
                         turn_left()
-                    if get_direction() != "NORTH":
+                    if get_direction() != NORTH:
                         move()
                         turn_left()
         else:
-            while get_direction() != "SOUTH":
+            while get_direction() != SOUTH:
                 turn_right()
 
             while get_y() < get_target_y():
@@ -49,13 +49,13 @@ while not is_on_target():
                             turn_right()
                         move()
                         turn_left()
-                    if get_direction() != "SOUTH":
+                    if get_direction() != SOUTH:
                         move()
                         turn_left()
 
     # turn west if the target is west of the player
     else:
-        while get_direction() != "WEST":
+        while get_direction() != WEST:
             turn_right()
 
         while get_x() > get_target_x():
@@ -67,13 +67,13 @@ while not is_on_target():
                         turn_right()
                     move()
                     turn_left()
-                if get_direction() != "WEST":
+                if get_direction() != WEST:
                     move()
                     turn_left()
 
         # turn north if the target is north of the player
         if get_target_y() < get_y():
-            while get_direction() != "NORTH":
+            while get_direction() != NORTH:
                 turn_left()
 
             while get_y() > get_target_y():
@@ -85,11 +85,11 @@ while not is_on_target():
                             turn_right()
                         move()
                         turn_left()
-                    if get_direction() != "NORTH":
+                    if get_direction() != NORTH:
                         move()
                         turn_left()
         else:
-            while get_direction() != "SOUTH":
+            while get_direction() != SOUTH:
                 turn_right()
 
             while get_y() < get_target_y():
@@ -101,7 +101,7 @@ while not is_on_target():
                             turn_right()
                         move()
                         turn_left()
-                    if get_direction() != "SOUTH":
+                    if get_direction() != SOUTH:
                         move()
                         turn_left()
 

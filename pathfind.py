@@ -29,6 +29,11 @@ OBSTACLE_TEXTURE = pygame.transform.scale(OBSTACLE_TEXTURE, (GRID_SIZE, GRID_SIZ
 ENEMY_TEXTURE = pygame.image.load("assets/enemy.png")
 ENEMY_TEXTURE = pygame.transform.scale(ENEMY_TEXTURE, (GRID_SIZE, GRID_SIZE))
 
+NORTH = "NORTH"
+EAST = "EAST"
+SOUTH = "SOUTH"
+WEST = "WEST"
+
 # Initialize Pygame
 pygame.init()
 window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
