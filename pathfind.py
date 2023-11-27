@@ -6,10 +6,9 @@ import sys
 import json
 import pygame
 import importlib
-import your_code_here
 
 # Constants
-GRID_SIZE = 60
+GRID_SIZE = 60  
 GRID_WIDTH = 16
 GRID_HEIGHT = 12
 WINDOW_WIDTH = GRID_WIDTH * GRID_SIZE
@@ -89,9 +88,9 @@ def refresh_screen():
             window.blit(BACK_TEXTURE, (x, y))
 
     for x in range(0, WINDOW_WIDTH, GRID_SIZE):
-        pygame.draw.line(window, BLACK, (x, 0), (x, WINDOW_HEIGHT))
+        pygame.draw.line(window, WHITE, (x, 0), (x, WINDOW_HEIGHT))
     for y in range(0, WINDOW_HEIGHT, GRID_SIZE):
-        pygame.draw.line(window, BLACK, (0, y), (WINDOW_WIDTH, y))
+        pygame.draw.line(window, WHITE, (0, y), (WINDOW_WIDTH, y))
 
     for obstacle in obstacles:
         window.blit(OBSTACLE_TEXTURE, (obstacle[0] * GRID_SIZE, obstacle[1] * GRID_SIZE))
@@ -109,8 +108,9 @@ def refresh_screen():
 
     window.blit(TARGET_TEXTURE, (target_x * GRID_SIZE, target_y * GRID_SIZE))
     window.blit(source, (player_x * GRID_SIZE, player_y * GRID_SIZE))
+
     pygame.display.flip()
-    clock.tick(30)
+    clock.tick(8)
 
 # Game functions
 def get_direction():

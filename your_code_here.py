@@ -1,111 +1,30 @@
 from pathfind import * # keep this line to import all the functions
-
-while not is_on_target():
-    # turn east if the target is east of the player
-    if get_target_x() > get_x():
-        while get_direction() != EAST:
+import time
+while get_x() != get_target_x() or get_y() != get_target_y():
+    while not can_move() or is_in_front_of_enemy():
+        if is_on_target:
+            destroy_dark_force()
+        time.sleep(1)
+        turn_left()
+        time.sleep(1)
+        if can_move():
+            move()
+            time.sleep(1)
             turn_right()
 
-        while get_x() < get_target_x():
-            if can_move() and not is_in_front_of_enemy():
-                move()
-            else :
-                while not can_move() or is_in_front_of_enemy():
-                    while not can_move() or is_in_front_of_enemy():
-                        turn_right()
-                    move()
-                    turn_left()
-                if get_direction() != EAST:
-                    move()
-                    turn_left()
+    move()
 
-        # turn north if the target is north of the player
-        if get_target_y() < get_y():
-            while get_direction() != NORTH:
-                turn_left()
-
-            while get_y() > get_target_y():
-                if can_move() and not is_in_front_of_enemy():
-                    move()
-                else :
-                    while not can_move() or is_in_front_of_enemy():
-                        while not can_move() or is_in_front_of_enemy():
-                            turn_right()
-                        move()
-                        turn_left()
-                    if get_direction() != NORTH:
-                        move()
-                        turn_left()
-        else:
-            while get_direction() != SOUTH:
-                turn_right()
-
-            while get_y() < get_target_y():
-                if can_move() and not is_in_front_of_enemy():
-                    move()
-                else :
-                    while not can_move() or is_in_front_of_enemy():
-                        while not can_move():
-                            turn_right()
-                        move()
-                        turn_left()
-                    if get_direction() != SOUTH:
-                        move()
-                        turn_left()
-
-    # turn west if the target is west of the player
+    objective = get_direction()
+    if get_x() < get_target_x():
+        objective = EAST
     else:
-        while get_direction() != WEST:
-            turn_right()
+        objective = WEST
+    if get_y() < get_target_y():
+        objective = SOUTH
+    else:
+        objective = NORTH
 
-        while get_x() > get_target_x():
-            if can_move() and not is_in_front_of_enemy():
-                move()
-            else :
-                while not can_move() or is_in_front_of_enemy():
-                    while not can_move() or is_in_front_of_enemy():
-                        turn_right()
-                    move()
-                    turn_left()
-                if get_direction() != WEST:
-                    move()
-                    turn_left()
-
-        # turn north if the target is north of the player
-        if get_target_y() < get_y():
-            while get_direction() != NORTH:
-                turn_left()
-
-            while get_y() > get_target_y():
-                if can_move() and not is_in_front_of_enemy():
-                    move()
-                else :
-                    while not can_move() or is_in_front_of_enemy():
-                        while not can_move() or is_in_front_of_enemy():
-                            turn_right()
-                        move()
-                        turn_left()
-                    if get_direction() != NORTH:
-                        move()
-                        turn_left()
-        else:
-            while get_direction() != SOUTH:
-                turn_right()
-
-            while get_y() < get_target_y():
-                if can_move() and not is_in_front_of_enemy():
-                    move()
-                else :
-                    while not can_move() or is_in_front_of_enemy():
-                        while not can_move():
-                            turn_right()
-                        move()
-                        turn_left()
-                    if get_direction() != SOUTH:
-                        move()
-                        turn_left()
-
-
-
+    while get_direction() != objective:
+        turn_left()
 
 destroy_dark_force()
