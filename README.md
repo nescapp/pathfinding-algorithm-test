@@ -1,4 +1,6 @@
 # pathfinding algorithm test
+This is now archived, but it was a too to test your pathfinding algorithms.
+
 ## Installation
 1. clone or download zip
 2. install pygame:
